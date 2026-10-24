@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачі 2 та 7</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px auto;
+            max-width: 650px;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.5;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: #fff;
+            padding: 20px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            border-left: 5px solid #007bff;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #007bff;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 9px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button.secondary {
+            background: #6c757d;
+        }
+        button.secondary:hover {
+            background: #545b62;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f1f3f5;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            margin: 2px;
+        }
+        .badge-gold { background-color: #d4af37; }
+        .badge-silver { background-color: #a0a0a0; }
+        .badge-bronze { background-color: #cd7f32; }
+        .badge-diploma { background-color: #17a2b8; }
+    </style>
+</head>
+<body>
+
+    <h2>Практичні завдання</h2>
+
+    <div class="card">
+        <h3>Задача 2: Пошук останньої цифри або останнього символу</h3>
+        <p>Введіть число або текст і оберіть дію:</p>
+        
+        <div class="form-group">
+            <input type="text" id="task2Input" value="12345" placeholder="Введіть число або текст...">
+        </div>
+
+        <div class="btn-group">
+            <button id="btnLastDigit">Остання цифра (number)</button>
+            <button id="btnLastChar" class="secondary">Останній символ (string)</button>
+        </div>
+
+        <div id="resultTask2" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="card">
+        <h3>Задача 7: Генерація та підрахунок нагород</h3>
+        <p>Натисніть кнопку для генерації 10 випадкових нагород та підрахунку їх кількості:</p>
+        <button id="generateBtn">Згенерувати та підрахувати</button>
+        
+        <div id="resultTask7" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function getLast(val, asChar = false) {
+            if (!asChar && !isNaN(Number(val)) && val !== '') {
+                const num = Math.floor(Math.abs(Number(val)));
+                return num % 10;
+            } else {
+                const str = String(val);
+                return str.length > 0 ? str.slice(-1) : '';
+            }
+        }
+
+        document.getElementById('btnLastDigit').addEventListener('click', () => {
+            const inputVal = document.getElementById('task2Input').value;
+            const res = getLast(inputVal, false);
+            const resDiv = document.getElementById('resultTask2');
+            
+            resDiv.style.display = 'block';
+            resDiv.innerHTML = `
+                <strong>Вхідне значення:</strong> "${inputVal}"<br>
+                <strong>Остання цифра:</strong> ${res}<br>
+                <strong>Тип результату:</strong> <code>${typeof res}</code>
+            `;
+        });
+
+        document.getElementById('btnLastChar').addEventListener('click', () => {
+            const inputVal = document.getElementById('task2Input').value;
+            const res = getLast(inputVal, true);
+            const resDiv = document.getElementById('resultTask2');
+            
+            resDiv.style.display = 'block';
+            resDiv.innerHTML = `
+                <strong>Вхідне значення:</strong> "${inputVal}"<br>
+                <strong>Останній символ:</strong> "${res}"<br>
+                <strong>Тип результату:</strong> <code>${typeof res}</code>
+            `;
+        });
+
+        const Reward = Object.freeze({
+            Gold: "Золота медаль",
+            Silver: "Срібна медаль",
+            Bronze: "Бронзова медаль",
+            Diploma: "Грамота"
+        });
+
+        function assertNever(x) {
+            throw new Error("Невідома або необроблена нагорода: " + x);
+        }
+
+        function getBadgeClass(reward) {
+            switch(reward) {
+                case Reward.Gold: return 'badge-gold';
+                case Reward.Silver: return 'badge-silver';
+                case Reward.Bronze: return 'badge-bronze';
+                case Reward.Diploma: return 'badge-diploma';
+                default: return '';
+            }
+        }
+
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            const rewardsList = Object.values(Reward);
+            const generatedRewards = [];
+            const count = 10;
+
+            for (let i = 0; i < count; i++) {
+                const randomIndex = Math.floor(Math.random() * rewardsList.length);
+                generatedRewards.push(rewardsList[randomIndex]);
+            }
+
+            const stats = {
+                [Reward.Gold]: 0,
+                [Reward.Silver]: 0,
+                [Reward.Bronze]: 0,
+                [Reward.Diploma]: 0
+            };
+
+            generatedRewards.forEach(reward => {
+                switch (reward) {
+                    case Reward.Gold:
+                        stats[Reward.Gold]++;
+                        break;
+                    case Reward.Silver:
+                        stats[Reward.Silver]++;
+                        break;
+                    case Reward.Bronze:
+                        stats[Reward.Bronze]++;
+                        break;
+                    case Reward.Diploma:
+                        stats[Reward.Diploma]++;
+                        break;
+                    default:
+                        assertNever(reward);
+                }
+            });
+
+            const formattedArray = generatedRewards
+                .map(r => `<span class="badge ${getBadgeClass(r)}">${r}</span>`)
+                .join(' ');
+
+            let html = `<strong>Згенерований масив нагород (${count} шт.):</strong><br><div style="margin-top:6px;">${formattedArray}</div>`;
+            html += `<br><strong>Підрахунок:</strong><ul>`;
+            for (const [key, value] of Object.entries(stats)) {
+                html += `<li><strong>${key}:</strong> ${value}</li>`;
+            }
+            html += `</ul>`;
+
+            const resDiv = document.getElementById('resultTask7');
+            resDiv.style.display = 'block';
+            resDiv.innerHTML = html;
+        });
+    </script>
+
+</body>
+</html>
